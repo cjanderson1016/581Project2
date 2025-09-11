@@ -1,16 +1,16 @@
 class BoardManager:
-  def __init__(grid_size: int, mine_count: int):
+  def __init__(self, grid_size: int, mine_count: int):
     pass
 
-  def place_mines():
+  def place_mines(self):
     pass
 
-  def get_cell(row: int, column: int):
+  def get_cell(self, row: int, column: int):
     pass
 
-  def neighbors(row: int, column: int) -> List[Cell]:
+  def neighbors(self, row: int, column: int) -> List[Cell]:
     pass
 
-  def countAjdacentMines(row: int, column: int) -> int:
+  def countAjdacentMines(self, row: int, column: int) -> int:
     pass
   
