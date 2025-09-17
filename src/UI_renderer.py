@@ -8,8 +8,8 @@ class GameGUI:
         self.root = tk.Tk()
         self.root.title("Minesweeper")
         self.buttons = [[None for _ in range(len(self.board))] for _ in range(len(self.board))]
-        self.mineCount = None
-        self.statusLabel = None
+        self.mine_count = None
+        self.status_label = None
         self.game = GameLogic
     
     def renderBoard(self):
