@@ -38,7 +38,10 @@ class BoardManager:
         return coords
 
     def count_adjacent_mines(self, row: int, column: int) -> int:
-        return sum(1 for cell in self.neighbors(row, column) if cell.has_mine)
+        return sum(
+            1 for r, c in self.neighbors(row, column)
+            if self.grid[r][c].has_mine
+        )
 
     def reset(self, mine_count: int):
         pass  
