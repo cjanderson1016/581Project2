@@ -50,7 +50,17 @@ class BoardManager:
         return sum(
             1 for r, c in self.neighbors(row, column)
             if self.grid[r][c].has_mine
-        )
 
+    # sets cell.neighbor_count to num of adjacent mines
+    def compute_adjacent_mines(self) -> None:
+        for r in range (self.grid_size):
+            for c in range (self.grid_size):
+                self.grid[r][c].neighbor_count = self.count_adjacent_mines(r,c)
+
+    #reinits board, does not place mines
     def reset(self, mine_count: int):
-        pass  
+        if mine_count > self.grid_size * self.grid_size:
+            raise ValueError(" mine_count too large ")
+        self.mine_count = mine_count
+        self.grid = [[Cell() for _ in range(self.grid_size)]
+                     for _ in range(self.grid_size)]
