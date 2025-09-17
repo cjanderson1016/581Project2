@@ -2,6 +2,7 @@ class Cell:
   def __init__(self):
     self.has_mine: bool = False
     self.has_flag: bool = False
+    self.is_revealed: bool = False
     self.neighbor_count: int = 0
 
   def flag(self):

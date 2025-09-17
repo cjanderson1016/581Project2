@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from cell import Cell
 import random
 
@@ -48,8 +48,8 @@ class BoardManager:
 
     def count_adjacent_mines(self, row: int, column: int) -> int:
         return sum(
-            1 for r, c in self.neighbors(row, column)
-            if self.grid[r][c].has_mine
+            1 for r, c in self.neighbors(row, column) 
+            if self.grid[r][c].has_mine)
 
     # sets cell.neighbor_count to num of adjacent mines
     def compute_adjacent_mines(self) -> None:
