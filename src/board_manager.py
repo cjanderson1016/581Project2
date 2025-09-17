@@ -26,16 +26,16 @@ class BoardManager:
             raise IndexError("cell coordinates out of range")
         return self.grid[row][column]
 
-    def neighbors(self, row: int, column: int) -> List[Cell]:
-        neighbor_cells = []
+    def neighbors(self, row: int, column: int) -> List[Tuple[int, int]]:
+        coords = []
         for dr in [-1, 0, 1]:
             for dc in [-1, 0, 1]:
                 if dr == 0 and dc == 0:
                     continue
                 r, c = row + dr, column + dc
                 if 0 <= r < self.grid_size and 0 <= c < self.grid_size:
-                    neighbor_cells.append(self.grid[r][c])
-        return neighbor_cells
+                    coords.append((r, c))
+        return coords
 
     def count_adjacent_mines(self, row: int, column: int) -> int:
         return sum(1 for cell in self.neighbors(row, column) if cell.has_mine)
