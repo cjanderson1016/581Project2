@@ -2,6 +2,7 @@ class Cell:
   def __init__(self):
     self.has_mine: bool = False
     self.has_flag: bool = False
+    self.neighbor_count: int = 0
 
   def flag(self):
     self.has_flag = True
@@ -14,4 +15,3 @@ class Cell:
 
   def remove_mine(self):
     self.has_mine = False
-

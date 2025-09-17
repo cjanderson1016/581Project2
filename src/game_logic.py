@@ -1,3 +1,4 @@
+from typing import List, Tuple
 from board_manager import BoardManager
 
 class GameLogic:
