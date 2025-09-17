@@ -12,14 +12,23 @@ class BoardManager:
         self.grid_size = grid_size
         self.mine_count = mine_count
         self.grid = [[Cell() for _ in range(grid_size)] for _ in range(grid_size)]
-
-    def place_mines(self):
-        rows = len(self.grid)
-        cols = len(self.grid[0])
-        all_coords = [(r, c) for r in range(rows) for c in range(cols)]
+    
+    def place_mines(self, safe_row: int, safe_col: int):
+        # all possible coordinates except the first clicked cell
+        all_coords = [
+            (r, c)
+            for r in range(self.grid_size)
+            for c in range(self.grid_size)
+            if not (r == safe_row and c == safe_col)
+        ]
         mine_coords = random.sample(all_coords, self.mine_count)
         for r, c in mine_coords:
             self.grid[r][c].has_mine = True
+    
+        for r in range(self.grid_size):
+            for c in range(self.grid_size):
+                self.grid[r][c].neighbor_count = self.count_adjacent_mines(r, c)
+
 
     def get_cell(self, row: int, column: int):
         if not (0 <= row < self.grid_size and 0 <= column < self.grid_size):
