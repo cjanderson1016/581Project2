@@ -56,19 +56,24 @@ class GameLogic:
     def _flood_reveal(self, row: int, col: int, out_list: List[Tuple[int, int]]):
         stack = [(row, col)]
         visited = set()
+    
         while stack:
             r, c = stack.pop()
             if (r, c) in visited:
                 continue
             visited.add((r, c))
+    
             cell = self.board_mgr.get_cell(r, c)
             if cell.is_revealed or cell.has_flag or cell.has_mine:
                 continue
+    
             cell.is_revealed = True
             self.revealed_safe_cells += 1
             out_list.append((r, c))
+    
             if cell.neighbor_count == 0:
                 for nr, nc in self.board_mgr.neighbors(r, c):
                     ncell = self.board_mgr.get_cell(nr, nc)
                     if not ncell.is_revealed and not ncell.has_flag and not ncell.has_mine:
                         stack.append((nr, nc))
+
