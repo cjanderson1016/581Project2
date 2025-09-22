@@ -1,8 +1,33 @@
+"""
+File: game_logic.py
+Module: GameLogic
+Purpose:
+    Implements core Minesweeper gameplay independent of UI: flag toggling, safe first-click mine placement, 
+    revealing cells, and win/loss detection.
+
+Inputs:
+    - A BoardManager instance supplied at construction. The UI
+      calls GameLogic methods in response to user actions.
+
+Outputs:
+    - toggle_flag(...) -> int: row, col for flags placed/removed.
+    - reveal_cell(...) -> List[Tuple[int,int]]: coordinates newly revealed cells.
+    - Game state mutations on the underlying BoardManager grid (cell flags,
+      cell revealed states, mine placement) and GameLogic state (counters, flags).
+
+Author: Jenny Tsotezo
+
+Created: 2025-09-17
+"""
+
 from typing import List, Tuple
 from board_manager import BoardManager
 
 class GameLogic:
-    # Initialize the game's runtime state.
+    # Construct a GameLogic bound to a specific BoardManager.
+    # Parameters: board_mgr (BoardManager): The board service that stores cells and performs mine placement / neighboring computations.
+    # Returns: None
+    # Initializes gameplay state and computes initial total_safe_cells from the current board_mgr.mine_count.
     def __init__(self, board_mgr: BoardManager):
         self.board_mgr = board_mgr
         # Delay mine placement until first reveal to guarantee safety.
@@ -17,6 +42,11 @@ class GameLogic:
          # Tracks how many flags the user has placed
         self.flags_placed: int = 0
 
+    # Start a brand-new round with a specified mine count. Clears prior state and prepares for a safe first click (mines not yet placed).
+    # Parameters: mine_count (int): Number of mines for the new game (e.g., 10–20).
+    # Returns: None
+    # Calls BoardManager.reset(mine_count) to rebuild an empty grid.
+    # Resets is_first_click, is_game_over, revealed_safe_cells, flags_placed, and recomputes total_safe_cells.
     # Reset all state for a new game with a given mine count
     def reset_game(self, mine_count: int):
          # Recreate an empty grid with new mine count.
@@ -32,6 +62,12 @@ class GameLogic:
         # Recompute safe cells in case mine_count changed
         self.total_safe_cells = self.board_mgr.grid_size ** 2 - self.board_mgr.mine_count
 
+    # Place or remove a flag on a covered cell, enforcing the rule that you cannot place more flags than the total number of mines.
+    # Parameters: row (int): Row index of the target cell.
+    #           - col (int): Column index of the target cell.
+    # Returns: int: +1  if a flag was successfully placed,
+    #               -1  if an existing flag was removed,
+    #                0  if no change (e.g., game over, cell already revealed, or flag limit would be exceeded).
     def toggle_flag(self, row: int, col: int) -> int:
         # Do not allow flagging after the game ended.
         if self.is_game_over:
@@ -49,7 +85,15 @@ class GameLogic:
         self.flags_placed += 1 if cell.has_flag else -1
         # Increment the count by 1 when placing, −1 when removing
         return 1 if cell.has_flag else -1
-
+    
+    # Reveal a cell. On the very first reveal, place mines *after* the click to guarantee safety at (row, col). If the cell is a mine, set loss. 
+    # If the cell is safe: Reveal it, and if its neighbor_count is zero, flood-reveal adjacent cells (including diagonals).
+    #                    - Track victory when all non-mine cells are revealed.
+    # Parameters: row (int): Row index of the cell to reveal.
+    #           - col (int): Column index of the cell to reveal.
+    # Returns: List[Tuple[int,int]]: Coordinates of all cells newly revealed during this action. If a mine is revealed, returns
+    # a single coordinate [(row, col)] to allow the UI to mark the hit.
+    # On first-click, calls BoardManager.place_mines(row, col) and recomputes total_safe_cells.
     def reveal_cell(self, row: int, col: int) -> List[Tuple[int, int]]:
         # Ignore reveals after win/loss.
         if self.is_game_over:
@@ -86,6 +130,15 @@ class GameLogic:
             self.is_game_over = True
         return newly_revealed
     
+    # Perform the classic Minesweeper "cascade" from a starting cell: reveal the starting safe cell; if its neighbor_count == 0, expand
+    # to all 8-directional neighbors, continuing until the zero region and its numbered boundaries are exposed.
+    # Parameters: row (int): Starting row index.
+    #           - col (int): Starting column index.
+    # Returns: None 
+    # Uses an explicit stack for iterative DFS.
+    # Maintains a visited set to avoid reprocessing the same coordinates.
+    # Skips mines, flagged cells, and already revealed cells.
+    # When a zero is revealed, pushes its neighbors on the stack.
     def _flood_reveal(self, row: int, col: int, out_list: List[Tuple[int, int]]):
         # Use an explicit stack for iterative depth first search (no recursion limits)
         stack = [(row, col)]
