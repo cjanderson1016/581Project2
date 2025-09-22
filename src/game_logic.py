@@ -61,6 +61,7 @@ class GameLogic:
         self.flags_placed = 0
         # Recompute safe cells in case mine_count changed
         self.total_safe_cells = self.board_mgr.grid_size ** 2 - self.board_mgr.mine_count
+        self.did_win: bool = False
 
     # Place or remove a flag on a covered cell, enforcing the rule that you cannot place more flags than the total number of mines.
     # Parameters: row (int): Row index of the target cell.
@@ -83,7 +84,11 @@ class GameLogic:
         cell.has_flag = not cell.has_flag
         # Keep the running count in sync.
         self.flags_placed += 1 if cell.has_flag else -1
-        # Increment the count by 1 when placing, −1 when removing
+        # If the number of flags you've placed equals the total number of mines
+        # AND every mine location actually has a flag on it
+        if self.flags_placed == self.board_mgr.mine_count and self._all_mines_flagged():
+            self.is_game_over = True   # end the game…
+            self.did_win = True        # and mark it as a victory.
         return 1 if cell.has_flag else -1
     
     # Reveal a cell. On the very first reveal, place mines *after* the click to guarantee safety at (row, col). If the cell is a mine, set loss. 
@@ -117,6 +122,8 @@ class GameLogic:
         if cell.has_mine:
             # The game ends
             self.is_game_over = True
+            # Player loses the game
+            self.did_win = False
             #return the detonated coordinate for the UI to render.
             return [(row, col)]
 
@@ -128,7 +135,28 @@ class GameLogic:
         # All safe cells are revealed, player wins the game
         if self.revealed_safe_cells >= self.total_safe_cells and not self.is_game_over:
             self.is_game_over = True
+            self.did_win = True
         return newly_revealed
+    
+    # Return True only if the flag layout exactly matches the mine layout:
+    #  - every mined cell is flagged, AND
+    # - no non-mined cell is flagged.
+    def _all_mines_flagged(self) -> bool:
+        n = self.board_mgr.grid_size 
+        # Iterate over all row indices 0..n-1          
+        for r in range(n): 
+            # Iterate over all column indices 0..n-1                     
+            for c in range(n):                  
+                # Access the Cell at (r, c)
+                cell = self.board_mgr.get_cell(r, c)   
+                # If the cell's mine status and flag status differ, the configuration is not "perfect":
+                # mined but not flagged  OR safe but flagged
+                if cell.has_mine != cell.has_flag:
+                    # Early exit: as soon as one mismatch is found, it's not a perfect match
+                    return False                
+        # If we scanned every cell without mismatch, all mines are flagged AND no safe cell is flagged
+        return True                             
+
     
     # Perform the classic Minesweeper "cascade" from a starting cell: reveal the starting safe cell; if its neighbor_count == 0, expand
     # to all 8-directional neighbors, continuing until the zero region and its numbered boundaries are exposed.
