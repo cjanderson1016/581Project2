@@ -1,12 +1,36 @@
+"""
+File: UI_renderer.py
+Module: GameGUI
+Description:
+    This GUI uses tkinter to create a grid of buttons that can be clicked on by the player to reveal either a safe cell with a count of neighbors having a mine, or a mine. 
+    The GUI also has flagging and win loss notification functionalities.
+Purpose: 
+    - To display a GUI that can be interacted with by the user while maintaining the logic of the game.
+Inputs:
+    - User specified mine count
+    - User inputs in the form of button clicking. 
+    - Cell coordinates 
+    - Boolean variables
+Outputs:
+    - Updates screen according to game logic and inputs from the user
+    - Update the mine count
+    - Produces warning messages as needed when out of bounds
+    
+Authors: Genea Dinnall, Sam Kelemen, Meg Taggart
+
+Creation Date: 09/17/2025
+"""
+# imports all necessary classes and APIs
 import tkinter as tk
 from tkinter import messagebox
 from board_manager import BoardManager
 from game_logic import GameLogic
 
-
+# creates GUI class object
 class GameGUI:
     def __init__(self):
         # Initializes all necessary variables for GUI management to make updates to the user interface
+        # Initializes 
         self.game = None
         self.board = None
         self.root = tk.Tk()
@@ -35,15 +59,19 @@ class GameGUI:
     # adds graphic to cell depending on status
     def renderCell(self, row:int, col:int, flag:bool):
         cell = self.board[row][col]
+        # handles if cell is a flag cell
         if flag:
             self.buttons[row][col].config(text='🚩',bg="yellow", font=('Arial', 10))
+        # mine cell handling
         elif cell.has_mine:
             self.updateStatus("Game Over")
             messagebox.showinfo("Game Over", "You have hit a mine!")
             self.buttons[row][col].config(text='*', bg='red', font=('Arial', 10))
+        # revealed neighbor handling
         elif cell.is_revealed:
             # Show the neighbor count including zero
             self.buttons[row][col].config(text=str(cell.neighbor_count), bg='lightgray', font=('Arial', 10))
+        # return to covered state if already a flag while in flag mode
         else:
             self.buttons[row][col].config(text=' ', bg='SystemButtonFace',font=('Arial',10))
     # creates initial frame for user input of mines
@@ -73,14 +101,15 @@ class GameGUI:
         except ValueError:
             messagebox.showerror("Invalid Input", "Mine Count must be entered as a number.")
             return
-        if self.mine_count < 0 or self.mine_count > 51:
-            messagebox.showwarning("Invalid number of mines!", "Please enter a number between 1 and 50")
+        if self.mine_count < 10 or self.mine_count > 20:
+            messagebox.showwarning("Invalid number of mines!", "Please enter a number between 10 and 20")
             return
 
         self.board_manager = BoardManager(grid_size=10, mine_count=self.mine_count)
         self.game = GameLogic(board_mgr=self.board_manager)
         self.board = self.board_manager.grid
         self.buttons = [[None for _ in range(len(self.board))] for _ in range(len(self.board))]
+        # destroys unnecessary components to render board
         self.label.destroy()
         self.mine_entry.destroy()
         self.start_button.destroy()
@@ -107,3 +136,4 @@ class GameGUI:
             self.status_label.grid(row=len(self.board)+1,column=0, columnspan=len(self.board), pady=5)
         else:
             self.status_label.config(text=status)
+
