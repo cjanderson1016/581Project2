@@ -31,11 +31,11 @@ from typing import List, Tuple
 from cell import Cell
 import random
 
- """a square grid of Cell objects. Mines are
+"""a square grid of Cell objects. Mines are
     placed after the user’s first click so that the first cell—and its 8
     neighbors are guaranteed safe, also computes per-cell neighbor mine counts."""
 class BoardManager:
-     """Inits an empty grid (no mines yet) of size grid_size×grid_size.
+    """Inits an empty grid (no mines yet) of size grid_size×grid_size.
         Mine count is stored for later placement via place_mines()."""
     def __init__(self, grid_size: int, mine_count: int):
         if grid_size <= 0:
