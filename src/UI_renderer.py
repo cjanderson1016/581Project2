@@ -21,6 +21,7 @@ Authors: Genea Dinnall, Sam Kelemen, Meg Taggart
 Creation Date: 09/17/2025
 """
 # imports all necessary classes and APIs
+import time
 import tkinter as tk
 from tkinter import messagebox
 from board_manager import BoardManager
@@ -44,15 +45,23 @@ class GameGUI:
         self.start_button = None
         self.board_manager = None
         self.flag_mode = False
+        self.start_time = None
+        self.timer_label = tk.Label(self.root, text="Time: 0")
+        self.running = False
         # calls the get mine count upon initialization to prompt user for mine count
         self.getMineCount()
+
     # renders board as grid of buttons based on length 10
     def renderBoard(self):
+        # show timer
+        self.timer_label.grid(row=0, column=0,columnspan=10, pady=5, sticky="n") # stretch it across all 10 columns, center it, and pad it
+
         for y in range(len(self.board)):
             for x in range(len(self.board)):
                 button = tk.Button(self.root, text=' ', width=4, height=2, font=('Arial', 10), command=lambda y=y, x=x: self.reveal(y,x))
-                button.grid(row=y, column=x)
+                button.grid(row=(y+1), column=(x+1))
                 self.buttons[y][x] = button
+
     # loops GUI to maintain display 
     def run(self):
         self.root.mainloop()
@@ -64,6 +73,11 @@ class GameGUI:
             self.buttons[row][col].config(text='🚩',bg="yellow", font=('Arial', 10))
         # mine cell handling
         elif cell.has_mine:
+            
+            # stop the timer
+            self.stop_timer()
+
+            # indicate loss
             self.updateStatus("Game Over")
             messagebox.showinfo("Game Over", "You have hit a mine!")
             self.buttons[row][col].config(text='*', bg='red', font=('Arial', 10))
@@ -87,11 +101,21 @@ class GameGUI:
         if self.flag_mode:
             self.addFlag(row, col)
             return
+        
+        # if it is the first click (reveal), start the timer
+        if self.game.is_first_click:
+            self.start_timer()
+
+        # reveal the cell in GameLogic (if it is the first click, this will set is_first_click to False)
         revealed_cells = self.game.reveal_cell(row, col)
         for r, c in revealed_cells:
             self.renderCell(r, c, False)
         
         if self.game.revealed_safe_cells == self.game.total_safe_cells:
+            # stop timer
+            self.stop_timer()
+
+            # indicate victory
             messagebox.showinfo("Victory!", "You revealed all safe cells. You win!")
             self.updateStatus("Winner")
     # validates input to mine count and begins building board and initializing game
@@ -137,3 +161,21 @@ class GameGUI:
         else:
             self.status_label.config(text=status)
 
+    # starts the timer
+    def start_timer(self):
+        self.start_time = time.time() # record the start time
+        self.running = True # set running to True to indicate the timer is running
+        self.update_timer() # call the update_timer function
+
+    # stops the timer by setting the global 'running' to False (read in update_timer)
+    def stop_timer(self):
+        self.running = False
+
+    # calls itself to update the timer every second until self.running is set to False
+    def update_timer(self):
+        # if the timer is running, update the timer, then call itself after 1 second has passed
+        if self.running:
+            elapsed = int(time.time() - self.start_time)
+            self.timer_label.config(text=f"Time: {elapsed}")
+            # call this method again after 1000 ms (1 sec)
+            self.root.after(1000, self.update_timer)
