@@ -42,6 +42,8 @@ class GameGUI:
         self.user_mine_count = tk.StringVar()
         self.label = None
         self.mine_entry = None
+        self.AI_label = None
+        self.AI_difficulty = None
         self.start_button = None
         self.board_manager = None
         self.flag_mode = False
@@ -50,6 +52,7 @@ class GameGUI:
         self.running = False
         # calls the get mine count upon initialization to prompt user for mine count
         self.getMineCount()
+        self.getAIDifficulty()
 
     # renders board as grid of buttons based on length 10
     def renderBoard(self):
@@ -96,6 +99,12 @@ class GameGUI:
         self.mine_entry.grid(row=0,column=1, padx=10,pady=10)
         self.start_button = tk.Button(self.root, text="Start Game", command=self.startGame)
         self.start_button.grid(row=1, column=0, columnspan=2, rowspan=2, pady=10)
+    # gets the difficulty of the AI
+    def getAIDifficulty(self):
+        options = ["Easy", "Medium", "Hard"]
+        
+        self.AI_label = tk.Label(self.root, text = "Choose Difficulty")
+        self.AI_difficulty = tk.
     # reveals selected cell or adds flag if in flag mode, also handles win/loss functionality
     def reveal(self, row: int, col: int):
         if self.flag_mode:
