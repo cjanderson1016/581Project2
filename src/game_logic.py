@@ -209,10 +209,13 @@ class GameLogic:
                         stack.append((nr, nc))
     
     #Easy: The computer clicks on any hidden cell at random.
-    def easy(self,reveal):
+    def easy(self,reveal, setFLag):
         untouched = self.board_mgr.untouched_cells()
         cell_to_uncover = random.choice(untouched)
+        #we have to set the flag state to false so that it doesn't place flags when flag_mode is on
+        flag_state = setFLag(False)
         reveal(cell_to_uncover[0],cell_to_uncover[1])
+        setFLag(flag_state)
 
     ''' 
     Medium: The computer applies two basic rules. 
@@ -222,7 +225,7 @@ class GameLogic:
       should open all other hidden neighbors. 
     - If no rule applies, the AI should pick a random hidden cell.
     '''
-    def medium(self,reveal):
+    def medium(self,reveal,setFlag):
         #Iterate through the whole grid of cells
         size = len(self.board_mgr.grid)
         for row in range(size):
@@ -241,13 +244,18 @@ class GameLogic:
                     if len(hidden) == cell.neighbor_count:
                         #If the cell number is the same as the number of adjacent hidden tiles, flag all adjacent hidden tiles
                         for hrow,hcol in hidden:
-                            self.board_mgr.get_cell(hrow,hcol).flag()
+                            flag_state = setFlag(True) 
+                            reveal(hrow,hcol)
+                            setFlag(flag_state)
                     if flagged == cell.neighbor_count:
                         #If the number of adjacent flagged cells is the same as the cell number, reveal all remaining adjecent non flagged cells
                         for hrow,hcol in hidden: 
                             if self.board_mgr.is_flagged(hrow,hcol):
                                 continue
+                            #we have to set the flag state to false so that it doesn't place flags when flag_mode is on
+                            flag_state = setFlag(False)
                             reveal(hrow,hcol)
+                            setFlag(flag_state)
                             return
         # If none of the first two rules apply, choose a random cell 
-        self.easy(reveal)
+        self.easy(reveal, setFlag)

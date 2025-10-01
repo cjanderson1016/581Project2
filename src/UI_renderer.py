@@ -154,19 +154,24 @@ class GameGUI:
         flag_toggle.grid(row=len(self.board)+1, column=0,columnspan=len(self.board),pady=10) # Added +1 to the row so its not overlapping with the board
         # Button for testing easy AI difficulty
         easy = tk.Button(self.root, text="Easy AI Test", command=self.easy)
-        easy.grid(row=len(self.board)+2,column=0, rowspan=10)
+        easy.grid(row=len(self.board)+2,column=0, columnspan=3)
         # Button for testing medium AI difficulty
         medium = tk.Button(self.root, text="Medium AI Test", command=self.medium)
-        medium.grid(row=len(self.board)+2,column=1, rowspan=10)
+        medium.grid(row=len(self.board)+2,column=3, columnspan=3)
         # Destroy AI difficulty menu
         self.AI_label.destroy()
         self.AI_difficulty.destroy()
     #This function makes it so that the AI can use the reveal function. Its only used in the button
     def easy(self):
-        self.game.easy(self.reveal)
+        self.game.easy(self.reveal, self.setFlag)
     #Same as the easy function but for medium
     def medium(self):
-        self.game.medium(self.reveal)
+        self.game.medium(self.reveal,self.setFlag)
+    # sets flag mode to be the given value
+    def setFlag(self, value): # This function is mainly for the AI to be able to place flags
+        cur_flag_state = self.flag_mode
+        self.flag_mode = value
+        return cur_flag_state #Return the state that the flag was in before the function
     # toggle flag mode and update status
     def toggleFlag(self):
         self.flag_mode = not self.flag_mode
@@ -175,6 +180,7 @@ class GameGUI:
     # adds flags to cells, and prints warning if out of flags
     def addFlag(self, row, col):
         result = self.game.toggle_flag(row,col)
+        self.board_manager.get_cell(row,col).flag()
         if result == 0:
             messagebox.showwarning("Out of flags","You are out of Flags")
             return
@@ -184,7 +190,7 @@ class GameGUI:
     def updateStatus(self, status:str):
         if self.status_label is None:
             self.status_label = tk.Label(self.root, text=status)
-            self.status_label.grid(row=len(self.board)+2,column=0, columnspan=len(self.board), pady=5)
+            self.status_label.grid(row=len(self.board)+1,column=6, columnspan=len(self.board), pady=5)
         else:
             self.status_label.config(text=status)
 
