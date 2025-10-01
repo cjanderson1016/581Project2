@@ -42,6 +42,9 @@ class GameGUI:
         self.user_mine_count = tk.StringVar()
         self.label = None
         self.mine_entry = None
+        self.AI_label = None
+        self.AI_difficulty = None
+        self.AI_diff_choice = tk.StringVar()
         self.start_button = None
         self.board_manager = None
         self.flag_mode = False
@@ -50,6 +53,7 @@ class GameGUI:
         self.running = False
         # calls the get mine count upon initialization to prompt user for mine count
         self.getMineCount()
+        self.getAIDifficulty()
 
     # renders board as grid of buttons based on length 10
     def renderBoard(self):
@@ -95,7 +99,14 @@ class GameGUI:
         self.mine_entry = tk.Entry(self.root, textvariable=self.user_mine_count)
         self.mine_entry.grid(row=0,column=1, padx=10,pady=10)
         self.start_button = tk.Button(self.root, text="Start Game", command=self.startGame)
-        self.start_button.grid(row=1, column=0, columnspan=2, rowspan=2, pady=10)
+        self.start_button.grid(row=2, column=0, columnspan=2, rowspan=2, pady=10)
+    # creates a dropdown menu for the player to choose the difficulty of the AI
+    def getAIDifficulty(self):
+        self.AI_diff_choice.set("Easy")
+        self.AI_label = tk.Label(self.root, text = "Choose AI Difficulty:")
+        self.AI_difficulty = tk.OptionMenu(self.root, self.AI_diff_choice, "None", "Easy", "Medium", "Hard")
+        self.AI_label.grid(row=1, column=0, padx=10)
+        self.AI_difficulty.grid(row=1, column=1, padx=10)
     # reveals selected cell or adds flag if in flag mode, also handles win/loss functionality
     def reveal(self, row: int, col: int):
         if self.flag_mode:
@@ -131,6 +142,7 @@ class GameGUI:
 
         self.board_manager = BoardManager(grid_size=10, mine_count=self.mine_count)
         self.game = GameLogic(board_mgr=self.board_manager)
+        self.game.AI_diff = self.AI_diff_choice.get()
         self.board = self.board_manager.grid
         self.buttons = [[None for _ in range(len(self.board))] for _ in range(len(self.board))]
         # destroys unnecessary components to render board
@@ -140,6 +152,9 @@ class GameGUI:
         self.renderBoard()
         flag_toggle = tk.Button(self.root, text="Toggle Flag Mode", command=self.toggleFlag)
         flag_toggle.grid(row=len(self.board), column=0,columnspan=len(self.board),pady=10)
+        # Destroy AI difficulty menu
+        self.AI_label.destroy()
+        self.AI_difficulty.destroy()
     # toggle flag mode and update status
     def toggleFlag(self):
         self.flag_mode = not self.flag_mode

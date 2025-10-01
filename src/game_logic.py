@@ -41,6 +41,8 @@ class GameLogic:
         self.total_safe_cells: int = self.board_mgr.grid_size ** 2 - self.board_mgr.mine_count
          # Tracks how many flags the user has placed
         self.flags_placed: int = 0
+        # Stores the difficulty of the AI
+        self.AI_diff = None
 
     # Start a brand-new round with a specified mine count. Clears prior state and prepares for a safe first click (mines not yet placed).
     # Parameters: mine_count (int): Number of mines for the new game (e.g., 10–20).
