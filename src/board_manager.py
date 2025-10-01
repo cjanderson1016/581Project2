@@ -82,6 +82,15 @@ class BoardManager:
             raise IndexError("cell coordinates out of range")
         return self.grid[row][column]
 
+    def untouched_cells(self):
+        # return coordinates of all unrevealed or unflagged cells
+        coords = []
+        for row in range(self.grid_size):
+            for col in range(self.grid_size):
+                cell = self.get_cell(row,col)
+                if not cell.has_flag and not cell.is_revealed: coords.append((row,col))
+        return coords
+
     def neighbors(self, row: int, column: int) -> List[Tuple[int, int]]:
         # return valid Moore-neighborhood coordinates (up to eight surrounding cells)
         coords = []

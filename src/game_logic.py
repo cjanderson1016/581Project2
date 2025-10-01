@@ -207,5 +207,37 @@ class GameLogic:
                         # Schedule neighboring cell to be processed
                         stack.append((nr, nc))
 
+    ''' 
+    Medium: The computer applies two basic rules. 
+    - First, if the number of hidden neighbors of a revealed cell equals that cell’s number, the AI should 
+      flag all hidden neighbors. 
+    - Second, if the number of flagged neighbors of a revealed cell equals that cell’s number, the AI 
+      should open all other hidden neighbors. 
+    - If no rule applies, the AI should pick a random hidden cell.
+    '''
     def hard(self):
-        pass
+        #Iterate through the whole grid of cells
+        size = len(self.board_mgr.grid)
+        for row in range(size):
+            for col in range(size):
+                cell = self.board_mgr.get_cell(row,col)
+                if cell.is_revealed:
+                    hidden = []
+                    flagged = 0
+                    #The next 5 lines get all the hidden and flagged cells
+                    neighboors = self.board_mgr.neighbors(row,col)
+                    for nrow,ncol in neighboors:
+                        neighboor = self.board_mgr.get_cell(nrow,ncol)
+                        if not neighboor.is_revealed: hidden.append((nrow,ncol))
+                        if neighboor.has_flag: flagged += 1
+                    if len(hidden) == cell.neighbor_count:
+                        for hrow,hcol in hidden:
+                            self.board_mgr.get_cell(hrow,hcol).flag()
+                    if flagged == cell.neighbor_count:
+                        for hrow,hcol in hidden: 
+                            if self.board_mgr.get_cell(hrow,hcol).has_flag:
+                                continue
+                            self.reveal_cell(hrow,hcol)
+                            return
+        untouched = self.board_mgr.untouched_cells()
+        
