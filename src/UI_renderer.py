@@ -151,7 +151,7 @@ class GameGUI:
         self.start_button.destroy()
         self.renderBoard()
         flag_toggle = tk.Button(self.root, text="Toggle Flag Mode", command=self.toggleFlag)
-        flag_toggle.grid(row=len(self.board), column=0,columnspan=len(self.board),pady=10)
+        flag_toggle.grid(row=len(self.board)+1, column=0,columnspan=len(self.board),pady=10) # Added +1 to the row so its not overlapping with the board
         # Destroy AI difficulty menu
         self.AI_label.destroy()
         self.AI_difficulty.destroy()

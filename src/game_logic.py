@@ -206,3 +206,6 @@ class GameLogic:
                     if not ncell.is_revealed and not ncell.has_flag and not ncell.has_mine:
                         # Schedule neighboring cell to be processed
                         stack.append((nr, nc))
+
+    def hard(self):
+        pass
