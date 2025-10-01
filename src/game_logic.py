@@ -207,11 +207,12 @@ class GameLogic:
                     if not ncell.is_revealed and not ncell.has_flag and not ncell.has_mine:
                         # Schedule neighboring cell to be processed
                         stack.append((nr, nc))
-
-    def easy(self):
+    
+    #Easy: The computer clicks on any hidden cell at random.
+    def easy(self,reveal):
         untouched = self.board_mgr.untouched_cells()
         cell_to_uncover = random.choice(untouched)
-        self.reveal_cell(cell_to_uncover[0],cell_to_uncover[1])
+        reveal(cell_to_uncover[0],cell_to_uncover[1])
 
     ''' 
     Medium: The computer applies two basic rules. 
@@ -221,7 +222,7 @@ class GameLogic:
       should open all other hidden neighbors. 
     - If no rule applies, the AI should pick a random hidden cell.
     '''
-    def medium(self):
+    def medium(self,reveal):
         #Iterate through the whole grid of cells
         print("AI move")
         size = len(self.board_mgr.grid)
@@ -247,7 +248,7 @@ class GameLogic:
                         for hrow,hcol in hidden: 
                             if self.board_mgr.is_flagged(hrow,hcol):
                                 continue
-                            self.reveal_cell(hrow,hcol)
+                            reveal(hrow,hcol)
                             return
         # If none of the first two rules apply, choose a random cell 
         self.easy()
