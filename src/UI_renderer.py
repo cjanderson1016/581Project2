@@ -153,7 +153,7 @@ class GameGUI:
         flag_toggle = tk.Button(self.root, text="Toggle Flag Mode", command=self.toggleFlag)
         flag_toggle.grid(row=len(self.board)+1, column=0,columnspan=len(self.board),pady=10) # Added +1 to the row so its not overlapping with the board
         # Button for testing medium AI difficulty
-        medium = tk.Button(self.root, text="Medium AI Test", command=self.game.hard())
+        medium = tk.Button(self.root, text="Medium AI Test", command=self.game.medium())
         medium.grid(row=len(self.board)+2,column=0, rowspan=10)
         # Destroy AI difficulty menu
         self.AI_label.destroy()
