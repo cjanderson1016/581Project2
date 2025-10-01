@@ -90,6 +90,10 @@ class BoardManager:
                 cell = self.get_cell(row,col)
                 if not cell.has_flag and not cell.is_revealed: coords.append((row,col))
         return coords
+    
+    def is_flagged(self,row,col):
+        # return whether a cell at the given coordinates is flagged
+        return self.get_cell(row,col).has_flag
 
     def neighbors(self, row: int, column: int) -> List[Tuple[int, int]]:
         # return valid Moore-neighborhood coordinates (up to eight surrounding cells)

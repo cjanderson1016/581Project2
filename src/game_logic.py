@@ -22,6 +22,7 @@ Created: 2025-09-17
 
 from typing import List, Tuple
 from board_manager import BoardManager
+import random
 
 class GameLogic:
     # Construct a GameLogic bound to a specific BoardManager.
@@ -217,6 +218,7 @@ class GameLogic:
     '''
     def hard(self):
         #Iterate through the whole grid of cells
+        print("AI move")
         size = len(self.board_mgr.grid)
         for row in range(size):
             for col in range(size):
@@ -225,19 +227,24 @@ class GameLogic:
                     hidden = []
                     flagged = 0
                     #The next 5 lines get all the hidden and flagged cells
-                    neighboors = self.board_mgr.neighbors(row,col)
+                    neighboors = self.board_mgr.neighbors(row,col) #Gets list of neighboor coordinates
                     for nrow,ncol in neighboors:
-                        neighboor = self.board_mgr.get_cell(nrow,ncol)
-                        if not neighboor.is_revealed: hidden.append((nrow,ncol))
-                        if neighboor.has_flag: flagged += 1
+                        #Iterates through the coordinates of each of the 8 neighboors
+                        neighboor = self.board_mgr.get_cell(nrow,ncol) 
+                        if not neighboor.is_revealed: hidden.append((nrow,ncol)) #checks if cell has been revealed
+                        if neighboor.has_flag: flagged += 1 #checks if cell is flagged
                     if len(hidden) == cell.neighbor_count:
+                        #If the cell number is the same as the number of adjacent hidden tiles, flag all adjacent hidden tiles
                         for hrow,hcol in hidden:
                             self.board_mgr.get_cell(hrow,hcol).flag()
                     if flagged == cell.neighbor_count:
+                        #If the number of adjacent flagged cells is the same as the cell number, reveal all remaining adjecent non flagged cells
                         for hrow,hcol in hidden: 
-                            if self.board_mgr.get_cell(hrow,hcol).has_flag:
+                            if self.board_mgr.is_flagged(hrow,hcol):
                                 continue
                             self.reveal_cell(hrow,hcol)
                             return
+        # If none of the first two rules apply, choose a random cell 
         untouched = self.board_mgr.untouched_cells()
-        
+        cell_to_uncover = random.choice(untouched)
+        self.reveal_cell(cell_to_uncover[0],cell_to_uncover[1])

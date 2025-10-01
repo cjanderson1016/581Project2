@@ -175,7 +175,7 @@ class GameGUI:
     def updateStatus(self, status:str):
         if self.status_label is None:
             self.status_label = tk.Label(self.root, text=status)
-            self.status_label.grid(row=len(self.board)+1,column=0, columnspan=len(self.board), pady=5)
+            self.status_label.grid(row=len(self.board)+2,column=0, columnspan=len(self.board), pady=5)
         else:
             self.status_label.config(text=status)
 
