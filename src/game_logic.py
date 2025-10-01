@@ -224,7 +224,6 @@ class GameLogic:
     '''
     def medium(self,reveal):
         #Iterate through the whole grid of cells
-        print("AI move")
         size = len(self.board_mgr.grid)
         for row in range(size):
             for col in range(size):
@@ -251,4 +250,4 @@ class GameLogic:
                             reveal(hrow,hcol)
                             return
         # If none of the first two rules apply, choose a random cell 
-        self.easy()
+        self.easy(reveal)

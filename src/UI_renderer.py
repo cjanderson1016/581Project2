@@ -152,14 +152,21 @@ class GameGUI:
         self.renderBoard()
         flag_toggle = tk.Button(self.root, text="Toggle Flag Mode", command=self.toggleFlag)
         flag_toggle.grid(row=len(self.board)+1, column=0,columnspan=len(self.board),pady=10) # Added +1 to the row so its not overlapping with the board
+        # Button for testing easy AI difficulty
+        easy = tk.Button(self.root, text="Easy AI Test", command=self.easy)
+        easy.grid(row=len(self.board)+2,column=0, rowspan=10)
         # Button for testing medium AI difficulty
-        medium = tk.Button(self.root, text="Easy AI Test", command=self.easy)
-        medium.grid(row=len(self.board)+2,column=0, rowspan=10)
+        medium = tk.Button(self.root, text="Medium AI Test", command=self.medium)
+        medium.grid(row=len(self.board)+2,column=1, rowspan=10)
         # Destroy AI difficulty menu
         self.AI_label.destroy()
         self.AI_difficulty.destroy()
+    #This function makes it so that the AI can use the reveal function. Its only used in the button
     def easy(self):
         self.game.easy(self.reveal)
+    #Same as the easy function but for medium
+    def medium(self):
+        self.game.medium(self.reveal)
     # toggle flag mode and update status
     def toggleFlag(self):
         self.flag_mode = not self.flag_mode
