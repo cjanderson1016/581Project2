@@ -22,7 +22,7 @@ Errors:
     ValueError for invalid sizes or unsafe mine_count
     IndexError for out-of-bounds get_cell
 
-Author(s): Sam Kelemen, Jenny Tsotezo, Genea Dinnall, Megan Taggart
+Author(s): Sam Kelemen, Jenny Tsotezo, Genea Dinnall, Megan Taggart, Matthew Eagleman
 Created Date: 2025-09-17
 
 """

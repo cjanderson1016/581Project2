@@ -16,7 +16,7 @@ Outputs:
     - Update the mine count
     - Produces warning messages as needed when out of bounds
     
-Authors: Genea Dinnall, Sam Kelemen, Meg Taggart
+Authors: Genea Dinnall, Sam Kelemen, Meg Taggart, Matthew Eagleman
 
 Creation Date: 09/17/2025
 """
