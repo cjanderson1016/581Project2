@@ -221,6 +221,11 @@ class GameGUI:
     def medium(self):
         self.game.medium(self.reveal,self.setFlag)
 
+    #Same as the easy/medium functions but for hard
+    def hard(self):
+        self.game.hard(self.reveal, self.setFlag)
+
+
     # sets flag mode to be the given value
     def setFlag(self, value): # This function is mainly for the AI to be able to place flags
         cur_flag_state = self.flag_mode
@@ -275,4 +280,5 @@ class GameGUI:
 
     # update the turn counter with the value of "turn"
     def update_turn(self, turn):
+
         self.turn_label.config(text=f"Turn: {turn}")
