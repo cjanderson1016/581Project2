@@ -89,8 +89,8 @@ class GameGUI:
         # handles if cell is a flag cell
         if flag:
             self.buttons[row][col].config(text='🚩',bg="yellow", font=('Arial', 10))
-        # mine cell handling
-        elif cell.has_mine:
+        # mine cell handling - show mine if it was revealed OR if game is over
+        elif cell.has_mine and (cell.is_revealed or self.game.is_game_over):
             
             # stop the timer
             self.stop_timer()
@@ -103,7 +103,7 @@ class GameGUI:
         elif cell.is_revealed:
             # Show the neighbor count including zero
             self.buttons[row][col].config(text=str(cell.neighbor_count), bg='lightgray', font=('Arial', 10))
-        # return to covered state if already a flag while in flag mode
+        # return to covered state if not flagged and not revealed
         else:
             self.buttons[row][col].config(text=' ', bg='SystemButtonFace',font=('Arial',10))
 
@@ -235,13 +235,16 @@ class GameGUI:
 
     # adds flags to cells, and prints warning if out of flags
     def addFlag(self, row, col):
-        result = self.game.toggle_flag(row,col)
-        self.board_manager.get_cell(row,col).flag()
+        # Ask game logic to toggle the flag state; it enforces rules
+        result = self.game.toggle_flag(row, col)
+        cell = self.board_manager.get_cell(row, col)
+        # If no change occurred, warn only when trying to place a new flag but at limit
         if result == 0:
-            messagebox.showwarning("Out of flags","You are out of Flags")
+            if not cell.has_flag and self.game.flags_placed >= self.board_manager.mine_count:
+                messagebox.showwarning("Out of flags", "You are out of Flags")
             return
-        else:
-            self.renderCell(row, col, self.game.board_mgr.get_cell(row=row,column=col).has_flag)
+        # Re-render the cell based on current flag state
+        self.renderCell(row, col, cell.has_flag)
 
     # updates status label at bottom of screen
     def updateStatus(self, status:str):
