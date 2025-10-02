@@ -159,7 +159,7 @@ class GameGUI:
         #   3. cells were revealed (i.e. the player did not just click on a flagged cell)
         # then control is passed to the ai solver...
         if (not self.game.is_game_over) and (self.ai_active) and (revealed_cells): 
-            self.ai.play_turn() # the ai makes its decision
+            self.ai.play_turn(self.reveal, self.setFlag) # the ai makes its decision
             # === after the ai makes its turn === #
             if(not self.game.is_game_over): # the ai did not lose and the game continues  
                 self.turn += 1 # increment the turn counter now that both the player and AI have done their turns
@@ -192,7 +192,7 @@ class GameGUI:
         # if the player wants to play against the ai (i.e. they did not select "None"), initialize the AI Solver and set ai_active to True
         if self.ai_diff != "None":
             self.ai_active = True
-            self.ai = AISolver(self.ai_diff)
+            self.ai = AISolver(self.ai_diff, self.board_manager)
 
         self.board = self.board_manager.grid
         self.buttons = [[None for _ in range(len(self.board))] for _ in range(len(self.board))]
