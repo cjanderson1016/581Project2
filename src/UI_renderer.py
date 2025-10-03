@@ -159,6 +159,7 @@ class GameGUI:
         #   3. cells were revealed (i.e. the player did not just click on a flagged cell)
         # then control is passed to the ai solver...
         if (not self.game.is_game_over) and (self.ai_active) and (revealed_cells): 
+            self.ai_active = False
             self.ai.play_turn(self.reveal, self.setFlag) # the ai makes its decision
             # === after the ai makes its turn === #
             if(not self.game.is_game_over): # the ai did not lose and the game continues  
@@ -172,6 +173,7 @@ class GameGUI:
                 # indicate victory
                 messagebox.showinfo("Victory!", "You revealed all safe cells. You win!")
                 self.updateStatus("Winner")
+        self.ai_active = True
 
     # validates input to mine count and begins building board and initializing game
     def startGame(self):
