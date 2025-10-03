@@ -81,9 +81,10 @@ class AISolver:
                     if len(hidden) == cell.neighbor_count:
                         #If the cell number is the same as the number of adjacent hidden tiles, flag all adjacent hidden tiles
                         for hrow,hcol in hidden:
-                            flag_state = setFlag(True) 
-                            reveal(hrow,hcol)
-                            setFlag(flag_state)
+                            if (not self.board_mgr.is_flagged(hrow,hcol)):
+                                flag_state = setFlag(True) 
+                                reveal(hrow,hcol)
+                                setFlag(flag_state)
                     if flagged == cell.neighbor_count:
                         #If the number of adjacent flagged cells is the same as the cell number, reveal all remaining adjecent non flagged cells
                         for hrow,hcol in hidden: 
