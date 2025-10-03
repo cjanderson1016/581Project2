@@ -11,7 +11,7 @@ Inputs:
 Outputs:
     - None -- it interacts with the board by revealing cells
     
-Authors: Connor Anderson
+Authors: Connor Anderson, Mohamed Ashraq
 
 Creation Date: 10/01/2025
 """
