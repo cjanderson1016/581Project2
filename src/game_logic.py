@@ -15,7 +15,7 @@ Outputs:
     - Game state mutations on the underlying BoardManager grid (cell flags,
       cell revealed states, mine placement) and GameLogic state (counters, flags).
 
-Author: Jenny Tsotezo, Matthew Eagleman
+Author: Jenny Tsotezo, Matthew Eagleman, Mohamed Ashraq
 
 Created: 2025-09-17
 """
@@ -494,5 +494,6 @@ class AISolver:
 
         # No 1-2-1 action found
         return False
+
 
 
