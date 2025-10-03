@@ -173,7 +173,7 @@ class GameGUI:
                 # indicate victory
                 messagebox.showinfo("Victory!", "You revealed all safe cells. You win!")
                 self.updateStatus("Winner")
-        self.ai_active = True
+        if (self.ai_diff != "None"): self.ai_active = True
 
     # validates input to mine count and begins building board and initializing game
     def startGame(self):
