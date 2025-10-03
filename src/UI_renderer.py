@@ -53,6 +53,7 @@ class GameGUI:
         self.running = False
         
         self.turn = 1 # the turn counter (to be incremented after each move made by the AI Solver)
+        self.ai_turn = False # indicates if it is the ai solver's turn
         self.turn_label = tk.Label(self.root, text="Turn: 1") # the initial turn label
         self.ai = None # to be initialized in startGame if the player chooses to play againt the AI (after the AI difficulty was selected)
         self.ai_diff = None # to hold the string corelating to the ai difficulty
@@ -95,10 +96,11 @@ class GameGUI:
             # stop the timer
             self.stop_timer()
 
-            # indicate loss
-            self.updateStatus("Game Over")
-            messagebox.showinfo("Game Over", "You have hit a mine!")
-            self.buttons[row][col].config(text='*', bg='red', font=('Arial', 10))
+            self.buttons[row][col].config(text='*', bg='red', font=('Arial', 10)) # show the mine
+            if (not self.ai_turn): # if the player revealed the bomb, show loss message
+                self.updateStatus("Game Over")
+                messagebox.showinfo("Game Over", "You have hit a mine!")
+            
         # revealed neighbor handling
         elif cell.is_revealed:
             # Show the neighbor count including zero
@@ -160,8 +162,13 @@ class GameGUI:
         # then control is passed to the ai solver...
         if (not self.game.is_game_over) and (self.ai_active) and (revealed_cells): 
             self.ai_active = False
+            
+            self.ai_turn = True
             self.ai.play_turn(self.reveal, self.setFlag) # the ai makes its decision
+            self.ai_turn = False
+
             # === after the ai makes its turn === #
+
             if(not self.game.is_game_over): # the ai did not lose and the game continues  
                 self.turn += 1 # increment the turn counter now that both the player and AI have done their turns
                 self.update_turn(self.turn) # update the label with the new turn count
@@ -171,7 +178,7 @@ class GameGUI:
                 self.updateStatus("Draw")
             else: # the game is over meaining the ai clicked a bomb
                 # indicate victory
-                messagebox.showinfo("Victory!", "You revealed all safe cells. You win!")
+                messagebox.showinfo("Victory!", "The Solver blew up! You win!")
                 self.updateStatus("Winner")
         if (self.ai_diff != "None"): self.ai_active = True
 

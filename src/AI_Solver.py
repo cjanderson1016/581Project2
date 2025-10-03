@@ -52,7 +52,7 @@ class AISolver:
 
     # the easy function
     def easy(self,reveal, setFLag):
-        messagebox.showinfo(message=f"AI Solver (difficulty: {self.difficulty}) called self.easy()")
+        # messagebox.showinfo(message=f"AI Solver (difficulty: {self.difficulty}) called self.easy()")
         untouched = self.board_mgr.untouched_cells()
         cell_to_uncover = random.choice(untouched)
         #we have to set the flag state to false so that it doesn't place flags when flag_mode is on
@@ -63,7 +63,7 @@ class AISolver:
     # the medium function
     def medium(self,reveal,setFlag):
         #Iterate through the whole grid of cells
-        messagebox.showinfo(message=f"AI Solver (difficulty: {self.difficulty}) called self.medium()")
+        # messagebox.showinfo(message=f"AI Solver (difficulty: {self.difficulty}) called self.medium()")
         size = len(self.board_mgr.grid)
         for row in range(size):
             for col in range(size):
