@@ -49,6 +49,7 @@ class GameGUI:
         self.board_manager = None
         self.flag_mode = False
         self.start_time = None
+        self.final_time = None
         self.timer_label = tk.Label(self.root, text="Time: 0")
         self.running = False
         
@@ -99,7 +100,7 @@ class GameGUI:
             self.buttons[row][col].config(text='*', bg='red', font=('Arial', 10)) # show the mine
             if (not self.ai_turn): # if the player revealed the bomb, show loss message
                 self.updateStatus("Game Over")
-                messagebox.showinfo("Game Over", "You have hit a mine!")
+                messagebox.showinfo("Game Over", "You have hit a mine\n\nYour final time was: "+str(self.final_time)+" second(s)")
             
         # revealed neighbor handling
         elif cell.is_revealed:
@@ -148,11 +149,11 @@ class GameGUI:
 
             if(self.ai_active): # the player completed the board against the ai -- Draw
                 # indicate draw
-                messagebox.showinfo("Draw...", "No one blew up!")
+                messagebox.showinfo("Draw...", "No one blew up!\n\nYour final time was: "+str(self.final_time)+" second(s)")
                 self.updateStatus("Draw")
             else: # if it was single player -- Victory!
                 # indicate victory
-                messagebox.showinfo("Victory!", "You revealed all safe cells. You win!")
+                messagebox.showinfo("Victory!", "You revealed all safe cells. You win!\n\nYour final time was: "+str(self.final_time)+" second(s)")
                 self.updateStatus("Winner")
         
         # if...
@@ -174,11 +175,11 @@ class GameGUI:
                 self.update_turn(self.turn) # update the label with the new turn count
             elif self.game.revealed_safe_cells == self.game.total_safe_cells: # the ai completed the board
                 # indicate draw
-                messagebox.showinfo("Draw...", "No one blew up!")
+                messagebox.showinfo("Draw...", "No one blew up!\n\nYour final time was: "+str(self.final_time)+" second(s)")
                 self.updateStatus("Draw")
             else: # the game is over meaining the ai clicked a bomb
                 # indicate victory
-                messagebox.showinfo("Victory!", "The Solver blew up! You win!")
+                messagebox.showinfo("Victory!", "The Solver blew up! You win!\n\nYour final time was: "+str(self.final_time)+" second(s)")
                 self.updateStatus("Winner")
         if (self.ai_diff != "None"): self.ai_active = True
 
@@ -277,6 +278,7 @@ class GameGUI:
     # stops the timer by setting the global 'running' to False (read in update_timer)
     def stop_timer(self):
         self.running = False
+        self.final_time = round(time.time() - self.start_time)
 
     # calls itself to update the timer every second until self.running is set to False
     def update_timer(self):
