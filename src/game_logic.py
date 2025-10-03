@@ -90,7 +90,7 @@ class GameLogic:
         # If the number of flags you've placed equals the total number of mines
         # AND every mine location actually has a flag on it
         if self.flags_placed == self.board_mgr.mine_count and self._all_mines_flagged():
-            self.is_game_over = True   # end the game…
+            # self.is_game_over = True   # end the game…
             self.did_win = True        # and mark it as a victory.
         return 1 if cell.has_flag else -1
     

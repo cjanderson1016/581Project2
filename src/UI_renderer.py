@@ -101,6 +101,9 @@ class GameGUI:
             if (not self.ai_turn): # if the player revealed the bomb, show loss message
                 self.updateStatus("Game Over")
                 messagebox.showinfo("Game Over", "You have hit a mine\n\nYour final time was: "+str(self.final_time)+" second(s)")
+            else: # if the ai revealed the bomb, show victory message
+                messagebox.showinfo("Victory!", "The Solver blew up! You win!\n\nYour final time was: "+str(self.final_time)+" second(s)")
+                self.updateStatus("Winner")
             
         # revealed neighbor handling
         elif cell.is_revealed:
@@ -147,11 +150,11 @@ class GameGUI:
             # stop timer
             self.stop_timer()
 
-            if(self.ai_active): # the player completed the board against the ai -- Draw
+            if(self.ai_diff != "None"): # the was completed in 2 player mode -- Draw
                 # indicate draw
                 messagebox.showinfo("Draw...", "No one blew up!\n\nYour final time was: "+str(self.final_time)+" second(s)")
                 self.updateStatus("Draw")
-            else: # if it was single player -- Victory!
+            else: # the board was completed in single player mode -- Victory!
                 # indicate victory
                 messagebox.showinfo("Victory!", "You revealed all safe cells. You win!\n\nYour final time was: "+str(self.final_time)+" second(s)")
                 self.updateStatus("Winner")
@@ -168,19 +171,6 @@ class GameGUI:
             self.ai.play_turn(self.reveal, self.setFlag) # the ai makes its decision
             self.ai_turn = False
 
-            # === after the ai makes its turn === #
-
-            if(not self.game.is_game_over): # the ai did not lose and the game continues  
-                self.turn += 1 # increment the turn counter now that both the player and AI have done their turns
-                self.update_turn(self.turn) # update the label with the new turn count
-            elif self.game.revealed_safe_cells == self.game.total_safe_cells: # the ai completed the board
-                # indicate draw
-                messagebox.showinfo("Draw...", "No one blew up!\n\nYour final time was: "+str(self.final_time)+" second(s)")
-                self.updateStatus("Draw")
-            else: # the game is over meaining the ai clicked a bomb
-                # indicate victory
-                messagebox.showinfo("Victory!", "The Solver blew up! You win!\n\nYour final time was: "+str(self.final_time)+" second(s)")
-                self.updateStatus("Winner")
         if (self.ai_diff != "None"): self.ai_active = True
 
     # validates input to mine count and begins building board and initializing game
