@@ -22,7 +22,7 @@ Errors:
     ValueError for invalid sizes or unsafe mine_count
     IndexError for out-of-bounds get_cell
 
-Author(s): Sam Kelemen, Jenny Tsotezo, Genea Dinnall, Megan Taggart
+Author(s): Sam Kelemen, Jenny Tsotezo, Genea Dinnall, Megan Taggart, Matthew Eagleman
 Created Date: 2025-09-17
 
 """
@@ -81,6 +81,19 @@ class BoardManager:
         if not (0 <= row < self.grid_size and 0 <= column < self.grid_size):
             raise IndexError("cell coordinates out of range")
         return self.grid[row][column]
+
+    def untouched_cells(self):
+        # return coordinates of all unrevealed or unflagged cells
+        coords = []
+        for row in range(self.grid_size):
+            for col in range(self.grid_size):
+                cell = self.get_cell(row,col)
+                if not cell.has_flag and not cell.is_revealed: coords.append((row,col))
+        return coords
+    
+    def is_flagged(self,row,col):
+        # return whether a cell at the given coordinates is flagged
+        return self.get_cell(row,col).has_flag
 
     def neighbors(self, row: int, column: int) -> List[Tuple[int, int]]:
         # return valid Moore-neighborhood coordinates (up to eight surrounding cells)

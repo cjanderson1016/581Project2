@@ -15,13 +15,14 @@ Outputs:
     - Game state mutations on the underlying BoardManager grid (cell flags,
       cell revealed states, mine placement) and GameLogic state (counters, flags).
 
-Author: Jenny Tsotezo
+Author: Jenny Tsotezo, Matthew Eagleman, Mohamed Ashraq
 
 Created: 2025-09-17
 """
 
 from typing import List, Tuple
 from board_manager import BoardManager
+import random
 
 class GameLogic:
     # Construct a GameLogic bound to a specific BoardManager.
@@ -41,6 +42,8 @@ class GameLogic:
         self.total_safe_cells: int = self.board_mgr.grid_size ** 2 - self.board_mgr.mine_count
          # Tracks how many flags the user has placed
         self.flags_placed: int = 0
+        # Stores the difficulty of the AI
+        self.AI_diff = None
 
     # Start a brand-new round with a specified mine count. Clears prior state and prepares for a safe first click (mines not yet placed).
     # Parameters: mine_count (int): Number of mines for the new game (e.g., 10–20).
@@ -87,7 +90,7 @@ class GameLogic:
         # If the number of flags you've placed equals the total number of mines
         # AND every mine location actually has a flag on it
         if self.flags_placed == self.board_mgr.mine_count and self._all_mines_flagged():
-            self.is_game_over = True   # end the game…
+            # self.is_game_over = True   # end the game…
             self.did_win = True        # and mark it as a victory.
         return 1 if cell.has_flag else -1
     
@@ -204,3 +207,56 @@ class GameLogic:
                     if not ncell.is_revealed and not ncell.has_flag and not ncell.has_mine:
                         # Schedule neighboring cell to be processed
                         stack.append((nr, nc))
+    
+    #Easy: The computer clicks on any hidden cell at random.
+    def easy(self,reveal, setFLag):
+        untouched = self.board_mgr.untouched_cells()
+        cell_to_uncover = random.choice(untouched)
+        #we have to set the flag state to false so that it doesn't place flags when flag_mode is on
+        flag_state = setFLag(False)
+        reveal(cell_to_uncover[0],cell_to_uncover[1])
+        setFLag(flag_state)
+
+    ''' 
+    Medium: The computer applies two basic rules. 
+    - First, if the number of hidden neighbors of a revealed cell equals that cell’s number, the AI should 
+      flag all hidden neighbors. 
+    - Second, if the number of flagged neighbors of a revealed cell equals that cell’s number, the AI 
+      should open all other hidden neighbors. 
+    - If no rule applies, the AI should pick a random hidden cell.
+    '''
+    def medium(self,reveal,setFlag):
+        #Iterate through the whole grid of cells
+        size = len(self.board_mgr.grid)
+        for row in range(size):
+            for col in range(size):
+                cell = self.board_mgr.get_cell(row,col)
+                if cell.is_revealed:
+                    hidden = []
+                    flagged = 0
+                    #The next 5 lines get all the hidden and flagged cells
+                    neighboors = self.board_mgr.neighbors(row,col) #Gets list of neighboor coordinates
+                    for nrow,ncol in neighboors:
+                        #Iterates through the coordinates of each of the 8 neighboors
+                        neighboor = self.board_mgr.get_cell(nrow,ncol) 
+                        if not neighboor.is_revealed: hidden.append((nrow,ncol)) #checks if cell has been revealed
+                        if neighboor.has_flag: flagged += 1 #checks if cell is flagged
+                    if len(hidden) == cell.neighbor_count:
+                        #If the cell number is the same as the number of adjacent hidden tiles, flag all adjacent hidden tiles
+                        for hrow,hcol in hidden:
+                            flag_state = setFlag(True) 
+                            reveal(hrow,hcol)
+                            setFlag(flag_state)
+                    if flagged == cell.neighbor_count:
+                        #If the number of adjacent flagged cells is the same as the cell number, reveal all remaining adjecent non flagged cells
+                        for hrow,hcol in hidden: 
+                            if self.board_mgr.is_flagged(hrow,hcol):
+                                continue
+                            #we have to set the flag state to false so that it doesn't place flags when flag_mode is on
+                            flag_state = setFlag(False)
+                            reveal(hrow,hcol)
+                            setFlag(flag_state)
+                            return
+        # If none of the first two rules apply, choose a random cell 
+                # If none of the first two rules apply, choose a random cell 
+        self.easy(reveal, setFlag)
