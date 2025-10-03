@@ -165,13 +165,16 @@ class GameGUI:
         #   3. cells were revealed (i.e. the player did not just click on a flagged cell)
         # then control is passed to the ai solver...
         if (not self.game.is_game_over) and (self.ai_active) and (revealed_cells): 
-            self.ai_active = False
+            self.ai_active = False # this is making it so that this section only runs after the players turn
             
-            self.ai_turn = True
+            self.ai_turn = True # indicate that it is the ai solver taking its turn
             self.ai.play_turn(self.reveal, self.setFlag) # the ai makes its decision
-            self.ai_turn = False
+            if (not self.game.is_game_over): # if the game is not over after the ai solver's turn -- increment the turn counter
+                self.turn += 1
+                self.update_turn(self.turn)
+            self.ai_turn = False # indicate that it is no longer the ai solver taking its turn
 
-        if (self.ai_diff != "None"): self.ai_active = True
+        if (self.ai_diff != "None"): self.ai_active = True # if it is in two-player mode, make sure to change ai_active back to True
 
     # validates input to mine count and begins building board and initializing game
     def startGame(self):
