@@ -123,6 +123,7 @@ class AISolver:
                         flagged += 1                # checks if cell is flagged
 
                 # Rule 1: if #hidden == number -> all hidden are mines
+                # ChatGPT helped with debugging the issue of the AI taking more than 1 turn
                 if hidden and len(hidden) == cell.neighbor_count:
                     for hr, hc in hidden:
                         if not self.board_mgr.is_flagged(hr, hc):
@@ -159,6 +160,8 @@ class AISolver:
         size = len(self.board_mgr.grid)
 
         # Horizontal 1-2-1
+        # Guidance from ChatGPT used for 1-2-1 functions to understand how this pattern guarantees safe moves and help structure it cleanly
+
         for r in range(size):
             for c in range(1, size - 1):
                 left  = self.board_mgr.get_cell(r, c - 1)
